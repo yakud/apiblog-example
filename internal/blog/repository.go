@@ -58,7 +58,7 @@ func (t *Repository) Update(post *Post) error {
 func (t *Repository) GetAll() ([]Post, error) {
 	var posts []Post
 
-	if err := t.db.Model(&posts).Select(); err != nil {
+	if err := t.db.Model(&posts).Order("id ASC").Select(); err != nil {
 		return nil, fmt.Errorf("get all post: %s", err.Error())
 	}
 
@@ -71,7 +71,19 @@ func (t *Repository) Get(post *Post) error {
 	}
 
 	return nil
+}
 
+func (t *Repository) IncrementViewsNumber(post *Post) error {
+	_, err := t.db.Model(post).
+		Set("views_number = views_number+1").
+		Where("id = ?", post.Id).
+		Returning("*").
+		Update(post)
+	if err != nil {
+		return fmt.Errorf("increment views number %d: %s", post.Id, err)
+	}
+
+	return nil
 }
 
 func NewRepository(db *pg.DB) *Repository {
