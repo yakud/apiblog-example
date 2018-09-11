@@ -4,6 +4,7 @@ import (
 	"github.com/gramework/gramework"
 	"github.com/yakud/apiblog-example/internal/gql"
 	"github.com/yakud/apiblog-example/internal/pg"
+	"github.com/yakud/apiblog-example/internal/redis"
 )
 
 type query struct{}
@@ -14,15 +15,24 @@ type Server struct {
 }
 
 func (t *Server) Run(config *Config) error {
-	pgdb, err := pg.NewConnection(nil)
+	// init pg
+	pgdb, err := pg.NewConnection(config.PGOptions)
 	if err != nil {
 		return err
 	}
-
 	defer pgdb.Close()
 
+	// init redis
+	redisdb, err := redis.NewConnection(config.RedisOptions)
+	if err != nil {
+		return err
+	}
+	defer redisdb.Close()
+
+	// init server
 	gr := gramework.New()
 
+	// parse graphql schema
 	schema, err := gql.FileMustParseSchema(config.GQLSchemaFile, &query{})
 	if err != nil {
 		return err

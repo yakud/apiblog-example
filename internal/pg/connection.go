@@ -1,6 +1,8 @@
 package pg
 
 import (
+	"fmt"
+
 	"github.com/go-pg/pg"
 	"github.com/pkg/errors"
 )
@@ -19,7 +21,7 @@ func NewConnection(opt *pg.Options) (*pg.DB, error) {
 
 	ok, err := PingDB(db)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("pgsql new connection: %s", err.Error())
 	}
 
 	if !ok {
@@ -32,7 +34,7 @@ func NewConnection(opt *pg.Options) (*pg.DB, error) {
 func PingDB(db *pg.DB) (bool, error) {
 	res, err := db.ExecOne("SELECT 1")
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("pgsql ping: %s", err.Error())
 	}
 
 	if res.RowsReturned() == 1 {
