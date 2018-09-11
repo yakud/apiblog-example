@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/gramework/gramework"
 	"github.com/yakud/apiblog-example/internal/gql"
+	"github.com/yakud/apiblog-example/internal/pg"
 )
 
 type query struct{}
@@ -13,6 +14,13 @@ type Server struct {
 }
 
 func (t *Server) Run(config *Config) error {
+	pgdb, err := pg.NewConnection(nil)
+	if err != nil {
+		return err
+	}
+
+	defer pgdb.Close()
+
 	gr := gramework.New()
 
 	schema, err := gql.FileMustParseSchema(config.GQLSchemaFile, &query{})

@@ -4,10 +4,9 @@ postgres:
   restart: always
   image: postgres:10.5
   environment:
-    - DEBUG=false
-    - DB_USER=pgadmin
-    - DB_PASS=pgadmin
-    - DB_NAME=apiblog
+    POSTGRES_USER: pgadmin
+    POSTGRES_PASSWORD: pgadmin
+    POSTGRES_DB: apiblog
 
 redis:
   image: redis
