@@ -40,6 +40,12 @@ func (t *Server) Run(config *Config) error {
 		return err
 	}
 
+	// init blog cache
+	postsCache := blog.NewCache(redisdb)
+	if err := postsCache.DropAll(); err != nil {
+		return err
+	}
+
 	// init server
 	gr := gramework.New()
 

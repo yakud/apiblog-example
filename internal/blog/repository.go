@@ -65,11 +65,9 @@ func (t *Repository) GetAll() ([]Post, error) {
 	return posts, nil
 }
 
-func (t *Repository) GetById(id ID, post *Post) error {
-	post.Id = id
-
+func (t *Repository) Get(post *Post) error {
 	if err := t.db.Select(post); err != nil {
-		return fmt.Errorf("get post by id %d: %s", id, err)
+		return fmt.Errorf("get post by id %d: %s", post.Id, err)
 	}
 
 	return nil
