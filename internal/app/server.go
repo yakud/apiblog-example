@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gramework/gramework"
+	"github.com/yakud/apiblog-example/internal/blog"
 	"github.com/yakud/apiblog-example/internal/gql"
 	"github.com/yakud/apiblog-example/internal/pg"
 	"github.com/yakud/apiblog-example/internal/redis"
@@ -28,6 +29,16 @@ func (t *Server) Run(config *Config) error {
 		return err
 	}
 	defer redisdb.Close()
+
+	// init blog repository
+	postsRepository := blog.NewRepository(pgdb)
+	if err := postsRepository.DropTable(); err != nil {
+		return err
+	}
+
+	if err := postsRepository.CreateTable(); err != nil {
+		return err
+	}
 
 	// init server
 	gr := gramework.New()
