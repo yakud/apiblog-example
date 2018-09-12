@@ -2,7 +2,6 @@ package blog
 
 import "sync"
 
-
 // Блокировка при обновлении строк на уровне структуры
 // todo: maybe блокировать только конкретную запись
 type Blog struct {
@@ -74,6 +73,8 @@ func (t *Blog) Get(post *Post) error {
 			return err
 		}
 
+		t.updateMutex.Lock()
+		defer t.updateMutex.Unlock()
 		// cache miss, set
 		if err := t.cache.Set(post); err != nil {
 			return err
@@ -101,8 +102,8 @@ func (t *Blog) IncrementViewsNumber(post *Post) error {
 
 func NewBlog(rep *Repository, cache *Cache) *Blog {
 	return &Blog{
-		cache:      cache,
-		repository: rep,
+		cache:       cache,
+		repository:  rep,
 		updateMutex: &sync.RWMutex{},
 	}
 }
