@@ -72,7 +72,7 @@ func (t *Resolver) Create(args struct {
 		return nil, err
 	}
 
-	return &PostResolver{Post: p}, nil
+	return &PostResolver{Post: *p}, nil
 }
 
 // update(id: ID!, name: String, shortDescr: String, preview: String, content: String, uri: String): Post

@@ -17,7 +17,7 @@ type post interface {
 
 type PostResolver struct {
 	post
-	Post *blog.Post
+	Post blog.Post
 }
 
 func (t PostResolver) Id() *graphql.ID {
