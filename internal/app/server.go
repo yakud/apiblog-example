@@ -6,6 +6,7 @@ import (
 	"github.com/yakud/apiblog-example/internal/gql"
 	"github.com/yakud/apiblog-example/internal/pg"
 	"github.com/yakud/apiblog-example/internal/redis"
+	"github.com/gramework/gramework/graphiql"
 )
 
 type Server struct {
@@ -56,12 +57,7 @@ func (t *Server) Run(config *Config) error {
 	}
 
 	gr.POST("/graphql", gql.NewHandler(schema))
-	gr.GET("/", func(ctx *gramework.Context) error {
-		ctx.SetBody([]byte(indexPage))
-		ctx.HTML()
-
-		return nil
-	})
+	gr.GET("/", graphiql.Handler)
 
 	return gr.ListenAndServe(config.ServerAddr)
 }
