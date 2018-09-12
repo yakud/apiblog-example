@@ -2,18 +2,18 @@ NAME:=apiblog-example
 MAINTAINER:="Aleksei Kiselev <yakudgm@gmail.com>"
 DESCRIPTION:="Api Blog example"
 
-APP_SERVER_PATH=$(GOPATH)/src/github.com/yakud/apiblog-example/cmd/apiblog-server
-
 all: $(NAME)
 
 up:
-	docker-compose up -d
+	docker-compose up
 
 down:
 	docker-compose stop
 
 install:
-	go get -d ./... && go install $(APP_SERVER_PATH)
+	go get -v ./... && \
+	ls -lh $(GOPROJECT) && \
+	go build -o $(GOPATH)/bin/apiblog-server github.com/yakud/apiblog-example/cmd/apiblog-server
 
 run:
 	$(GOPATH)/bin/apiblog-server

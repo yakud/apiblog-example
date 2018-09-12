@@ -1,14 +1,30 @@
-postgres:
-  ports:
-    - '5432:5432'
-  restart: always
-  image: postgres:10.5
-  environment:
-    POSTGRES_USER: pgadmin
-    POSTGRES_PASSWORD: pgadmin
-    POSTGRES_DB: apiblog
+version: '2'
+services:
+  postgres:
+    ports:
+      - '5432:5432'
+    restart: always
+    image: postgres:10.5
+    environment:
+      POSTGRES_USER: pgadmin
+      POSTGRES_PASSWORD: pgadmin
+      POSTGRES_DB: apiblog
 
-redis:
-  image: redis
-  ports:
-    - '6379:6379'
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+
+  apiblog:
+    build: ./docker/go/
+    ports:
+      - '8080:8080'
+    links:
+      - redis
+      - postgres
+    volumes:
+      - ./:/go/src/github.com/yakud/apiblog-example
+      - gopath:/go
+
+volumes:
+  gopath:
