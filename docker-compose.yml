@@ -14,13 +14,13 @@ services:
   apiblog:
     build: ./docker/go/
     ports:
-      - '8080:8080'
+      - '8084:8080'
     links:
       - redis
       - postgres
     volumes:
-      - ./:/go/src/github.com/yakud/apiblog-example
       - gopath:/go
+      - ./:/go/src/github.com/yakud/apiblog-example
 
 volumes:
   gopath:

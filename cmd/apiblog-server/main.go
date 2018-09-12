@@ -10,7 +10,7 @@ import (
 
 func main() {
 	config := &app.Config{
-		ServerAddr:    "127.0.0.1:8080",
+		ServerAddr:    "0.0.0.0:8080",
 		GQLSchemaFile: "schema/schema.graphql",
 
 		PGOptions: &pg.Options{
