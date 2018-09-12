@@ -8,7 +8,8 @@ import (
 )
 
 type Resolver struct {
-	blog *blog.Blog
+	blog     *blog.Blog
+	postPool *blog.PostPool
 }
 
 // get(id: ID!): Post
@@ -48,7 +49,8 @@ func (t *Resolver) Create(args struct {
 	Content    *string
 	Uri        *string
 }) (*PostResolver, error) {
-	p := &blog.Post{}
+	p := t.postPool.Acquire()
+	defer t.postPool.Put(p)
 
 	if args.Name != nil {
 		p.Name = *args.Name
@@ -144,8 +146,9 @@ func (t *Resolver) graphIDToInt(ID graphql.ID) int {
 	return i
 }
 
-func NewResolver(blog *blog.Blog) *Resolver {
+func NewResolver(b *blog.Blog) *Resolver {
 	return &Resolver{
-		blog: blog,
+		blog:     b,
+		postPool: blog.NewPostPool(),
 	}
 }

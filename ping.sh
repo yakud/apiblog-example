@@ -2,7 +2,7 @@
 
 curl -XPOST \
     -H "Content-Type: application/json" \
-    -d '{"query": "mutation{create(name: \"hello\", shortDescr: \"desc\"){ id }}"}' \
+    -d '{"query": "mutation{create(name: \"hello\", shortDescr: \"desc\"){ id, name }}"}' \
     127.0.0.1:8080/
 
 curl -XPOST \
