@@ -29,11 +29,9 @@ func (t *Handler) Handler(ctx *gramework.Context) {
 		return
 	}
 
-	ctx.Logger.Info("processing request")
 	if _, err := ctx.Encode(t.schema.Exec(ctx.ToContext(), req.Query, req.OperationName, req.Variables)); err != nil {
 		ctx.SetStatusCode(415)
 	}
-	ctx.Logger.Info("processing request done")
 }
 
 func NewHandler(schema *graphql.Schema) *Handler {

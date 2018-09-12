@@ -8,10 +8,6 @@ import (
 	"github.com/yakud/apiblog-example/internal/redis"
 )
 
-type query struct{}
-
-func (_ *query) Hello() string { return "Hello, world!" }
-
 type Server struct {
 }
 
@@ -46,16 +42,30 @@ func (t *Server) Run(config *Config) error {
 		return err
 	}
 
+	blogCompose := blog.NewBlog(
+		postsRepository,
+		postsCache,
+	)
+
 	// init server
 	gr := gramework.New()
 
 	// parse graphql schema
-	schema, err := gql.FileMustParseSchema(config.GQLSchemaFile, &query{})
+	schema, err := gql.FileMustParseSchema(
+		config.GQLSchemaFile,
+		gql.NewResolver(blogCompose),
+	)
 	if err != nil {
 		return err
 	}
 
-	gr.POST("/", gql.NewHandler(schema))
+	gr.POST("/graphql", gql.NewHandler(schema))
+	gr.GET("/", func(ctx *gramework.Context) error {
+		ctx.SetBody([]byte(indexPage))
+		ctx.HTML()
+
+		return nil
+	})
 
 	return gr.ListenAndServe(config.ServerAddr)
 }

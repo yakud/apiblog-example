@@ -1,13 +1,14 @@
 package blog
 
-import "strconv"
+import (
+	"strconv"
+)
 
-type ID int64
-type Counter uint32
+type ID int32
 
 type Post struct {
 	Id          ID     `json:"id"`
-	ViewsNumber int    `json:"views_number" sql:"default:0,notnull"`
+	ViewsNumber int32  `json:"views_number" sql:"default:0,notnull"`
 	Name        string `json:"name"`
 	ShortDescr  string `json:"short_descr"`
 	Preview     string `json:"preview"`

@@ -1,6 +1,27 @@
 schema {
     query: Query
+    mutation: Mutation
 }
+
 type Query {
-    hello: String!
+    getAll: [Post]!
+    get(id: ID!): Post
 }
+
+type Mutation {
+    create(name: String, shortDescr: String, preview: String, content: String, uri: String): Post
+    update(id: ID!, name: String, shortDescr: String, preview: String, content: String, uri: String): Post
+    delete(id: ID!): Boolean!
+    incrementViewsNumber(id: ID!): Post
+}
+
+type Post {
+    id: ID
+    viewsNumber: Int
+    name:        String
+    shortDescr:  String
+    preview:     String
+    content:     String
+    uri:         String
+}
+
