@@ -11,9 +11,8 @@ down:
 	docker-compose stop
 
 install:
-	go get -v ./... && \
-	ls -lh $(GOPROJECT) && \
-	go build -o $(GOPATH)/bin/apiblog-server github.com/yakud/apiblog-example/cmd/apiblog-server
+	go get -u -v ./... && \
+	go install github.com/yakud/apiblog-example/cmd/apiblog-server
 
 run:
 	$(GOPATH)/bin/apiblog-server

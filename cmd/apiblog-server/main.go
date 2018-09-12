@@ -17,7 +17,7 @@ func main() {
 			User:     "pgadmin",
 			Password: "pgadmin",
 			Database: "apiblog",
-			Addr:     "postgres:5432",
+			Addr:     "postgres:5434",
 		},
 
 		RedisOptions: &redis.Options{
