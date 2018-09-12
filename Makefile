@@ -7,11 +7,13 @@ APP_SERVER_PATH=$(GOPATH)/src/github.com/yakud/apiblog-example/cmd/apiblog-serve
 all: $(NAME)
 
 up:
-	cd ./docker && \
-	docker-compose up
+	docker-compose up -d
+
+down:
+	docker-compose stop
 
 install:
 	go install $(APP_SERVER_PATH)
 
 run:
-	go run $(APP_SERVER_PATH)/server.go
+	$(GOPATH)/bin/apiblog-server

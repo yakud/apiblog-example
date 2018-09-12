@@ -47,8 +47,6 @@ func (t *Blog) GetAll() ([]Post, error) {
 }
 
 func (t *Blog) Get(post *Post) error {
-	t.cache.makeKey(post)
-
 	if err := t.cache.Get(post); err != nil {
 		if err := t.repository.Get(post); err != nil {
 			// not found
