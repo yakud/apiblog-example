@@ -28,9 +28,7 @@ func (t *Server) Run(config *Config) error {
 
 	// init blog repository
 	postsRepository := blog.NewRepository(pgdb)
-	if err := postsRepository.DropTable(); err != nil {
-		return err
-	}
+	postsRepository.DropTable()
 
 	if err := postsRepository.CreateTable(); err != nil {
 		return err
@@ -38,9 +36,7 @@ func (t *Server) Run(config *Config) error {
 
 	// init blog cache
 	postsCache := blog.NewCache(redisdb)
-	if err := postsCache.DropAll(); err != nil {
-		return err
-	}
+	postsCache.DropAll()
 
 	blogCompose := blog.NewBlog(
 		postsRepository,
