@@ -48,6 +48,14 @@ func (t *Cache) Get(post *Post) error {
 	return nil
 }
 
+func (t *Cache) Delete(post *Post) error {
+	if err := t.db.Del(t.makeKey(post)).Err(); err != nil {
+		return fmt.Errorf("post cache del: %s", err.Error())
+	}
+
+	return nil
+}
+
 func (t *Cache) DropAll() error {
 	return t.db.FlushAll().Err()
 }
