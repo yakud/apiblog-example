@@ -14,7 +14,7 @@ services:
   apiblog:
     build: ./docker/go/
     ports:
-      - '8084:8080'
+      - '8080:8080'
     links:
       - redis
       - postgres

@@ -12,4 +12,7 @@ cd ${GOPROJECT}
 
 # Поднимаем docker containers
 make up
+
+# Зайдем на web морду
+open http://localhost:8080/
 ```
