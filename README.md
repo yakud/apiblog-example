@@ -4,8 +4,10 @@
 
 #### Init system:
 ```sh
-go get github.com/yakud/apiblog-example
-cd src/github.com/yakud/apiblog-example
+export GOPROJECT=$(GOPATH)/src/github.com/yakud/apiblog-example
+mkdir -p $(GOPROJECT)
+git clone https://github.com/yakud/apiblog-example.git $(GOPROJECT)
+cd $(GOPROJECT)
 make install
 make up
 make run
