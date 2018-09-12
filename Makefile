@@ -13,7 +13,7 @@ down:
 	docker-compose stop
 
 install:
-	go install $(APP_SERVER_PATH)
+	go get -d ./... && go install $(APP_SERVER_PATH)
 
 run:
 	$(GOPATH)/bin/apiblog-server
