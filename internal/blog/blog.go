@@ -1,6 +1,8 @@
 package blog
 
 // todo: как дела с конкурентностью???
+// todo: тут можем поставить некорректный кэш
+// todo: обеспечить блокировку записи на момент обновления
 type Blog struct {
 	cache      *Cache
 	repository *Repository
@@ -63,8 +65,6 @@ func (t *Blog) Get(post *Post) error {
 	return nil
 }
 
-// todo: тут можем поставить некорректный кэш
-// todo: обеспечить транзационность инкремента и кэша
 func (t *Blog) IncrementViewsNumber(post *Post) error {
 	if err := t.repository.IncrementViewsNumber(post); err != nil {
 		return err

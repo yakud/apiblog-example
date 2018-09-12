@@ -13,6 +13,8 @@ func FileMustParseSchema(file string, resolver interface{}, opts ...graphql.Sche
 		return nil, err
 	}
 
+	defer f.Close()
+
 	schemaRaw, err := ioutil.ReadAll(f)
 	if err != nil {
 		return nil, err
