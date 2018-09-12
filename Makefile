@@ -11,7 +11,7 @@ down:
 	docker-compose stop
 
 install:
-	go get -u -v ./... && \
+	go get -v ./... && \
 	go install github.com/yakud/apiblog-example/cmd/apiblog-server
 
 run:
