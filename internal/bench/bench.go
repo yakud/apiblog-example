@@ -15,7 +15,7 @@ var client = &http.Client{}
 func durationsToFloat64(durations []time.Duration) []float64 {
 	data := make([]float64, len(durations))
 	for i, j := range durations {
-		data[i] = float64(j.Nanoseconds() / time.Millisecond.Nanoseconds())
+		data[i] = float64(j.Nanoseconds() / int64(time.Millisecond))
 	}
 
 	return data
@@ -26,6 +26,7 @@ func Bench() {
 	durations := make([]time.Duration, 0)
 
 	go func() {
+		fmt.Println(durations)
 		data := durationsToFloat64(durations)
 		p50, _ := stats.Percentile(data, 50)
 		p75, _ := stats.Percentile(data, 75)

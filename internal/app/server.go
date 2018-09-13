@@ -54,10 +54,6 @@ func (t *Server) Run(config *Config) error {
 	return nil
 }
 
-func (t *Server) runBlogWorkers(config *Config) (*sync.WaitGroup, context.CancelFunc) {
-
-}
-
 func (t *Server) newBlogInstance(config *Config) (*blog.Instance, error) {
 	// init pg
 	pgdb, err := pg.NewConnection(config.PGOptions)
