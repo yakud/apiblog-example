@@ -11,6 +11,8 @@ import (
 )
 
 var client = &http.Client{}
+var jsonStr = []byte(`{"query": "mutation{create(name: \"hello\", shortDescr: \"desc\"){ id }}"}`)
+var req, _ = http.NewRequest("POST", "http://127.0.0.1:8080/graphql", bytes.NewBuffer(jsonStr))
 
 func durationsToFloat64(durations []time.Duration) []float64 {
 	data := make([]float64, len(durations))
@@ -22,6 +24,8 @@ func durationsToFloat64(durations []time.Duration) []float64 {
 }
 
 func Bench() {
+	req.Header.Set("Content-Type", "application/json")
+
 	var count int32
 	durations := make([]time.Duration, 0)
 
@@ -45,7 +49,7 @@ func Bench() {
 			)
 
 			atomic.StoreInt32(&count, 0)
-			durations = durations[:0]
+			durations = make([]time.Duration, 0)
 		}
 	}()
 
@@ -59,12 +63,6 @@ func Bench() {
 }
 
 func queryCreate() {
-	url := "http://127.0.0.1:8080/graphql"
-
-	var jsonStr = []byte(`{"query": "mutation{create(name: \"hello\", shortDescr: \"desc\"){ id }}"}`)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-	req.Header.Set("Content-Type", "application/json")
-
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
