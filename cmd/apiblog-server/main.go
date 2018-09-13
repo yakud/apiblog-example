@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-pg/pg"
 	"github.com/go-redis/redis"
+	"github.com/pkg/profile"
 	"github.com/yakud/apiblog-example/internal/app"
 )
 
@@ -36,6 +37,8 @@ func main() {
 			DB:       0,  // use default DB
 		},
 	}
+
+	defer profile.Start(profile.MemProfile).Stop()
 
 	err := app.NewServer().Run(config)
 	if err != nil {

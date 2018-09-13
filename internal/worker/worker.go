@@ -18,7 +18,8 @@ type WorkersPool struct {
 }
 
 func (t *WorkersPool) Run(blog *blog.Instance, ctx context.Context, wg *sync.WaitGroup) {
-	wg.Add(1)
+	ctx.Value().
+		wg.Add(1)
 	go func() {
 		defer wg.Done()
 		for {

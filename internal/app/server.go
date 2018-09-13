@@ -40,7 +40,6 @@ func (t *Server) Run(config *Config) error {
 
 	// init server
 	gr := gramework.New()
-
 	gr.POST("/graphql", gql.NewHandler(schema))
 	gr.GET("/", graphiql.Handler)
 
