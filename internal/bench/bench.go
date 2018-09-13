@@ -66,6 +66,7 @@ func Bench() {
 func queryCreate() error {
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI("http://127.0.0.1:8080/graphql")
+	req.Header.SetMethod("POST")
 	req.SetBody(jsonStr)
 
 	resp := fasthttp.AcquireResponse()
