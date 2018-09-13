@@ -5,6 +5,10 @@ import (
 
 	"sync"
 
+	"os"
+
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/cli"
 	"github.com/gramework/gramework"
 	"github.com/gramework/gramework/graphiql"
 	"github.com/yakud/apiblog-example/internal/blog"
@@ -39,7 +43,13 @@ func (t *Server) Run(config *Config) error {
 	}
 
 	// init server
-	gr := gramework.New()
+	gr := gramework.New(func(app *gramework.App) {
+		app.Logger = &log.Logger{
+			Level:   log.ErrorLevel,
+			Handler: cli.New(os.Stdout),
+		}
+	})
+
 	gr.POST("/graphql", gql.NewHandler(schema))
 	gr.GET("/", graphiql.Handler)
 
