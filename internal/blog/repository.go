@@ -17,7 +17,7 @@ func (t *Repository) CreateTable() error {
 	}
 
 	if err := t.db.CreateTable(&Post{}, opt); err != nil {
-		return fmt.Errorf("create table posts: %s", err.Error())
+		return fmt.Errorf("tasks table posts: %s", err.Error())
 	}
 
 	return nil
@@ -33,7 +33,7 @@ func (t *Repository) DropTable() error {
 
 func (t *Repository) Create(post *Post) (ID, error) {
 	if err := t.db.Insert(post); err != nil {
-		return 0, fmt.Errorf("create post: %s", err.Error())
+		return 0, fmt.Errorf("tasks post: %s", err.Error())
 	}
 
 	return post.Id, nil

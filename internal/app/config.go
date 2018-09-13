@@ -6,9 +6,9 @@ import (
 )
 
 type Config struct {
-	ServerAddr string
-
+	ServerAddr    string
 	GQLSchemaFile string
+	Workers       int
 
 	PGOptions    *pg.Options
 	RedisOptions *redis.Options

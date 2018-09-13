@@ -2,16 +2,25 @@ package blog
 
 import "sync"
 
+type Blog interface {
+	Create(*Post) (ID, error)
+	Delete(*Post) error
+	Update(*Post) error
+	GetAll() ([]Post, error)
+	Get(post *Post) error
+	IncrementViewsNumber(post *Post) error
+}
+
 // Блокировка при обновлении строк на уровне структуры
 // todo: maybe блокировать только конкретную запись
-type Blog struct {
+type Instance struct {
 	cache      *Cache
 	repository *Repository
 
 	updateMutex *sync.RWMutex
 }
 
-func (t *Blog) Create(post *Post) (ID, error) {
+func (t *Instance) Create(post *Post) (ID, error) {
 	t.updateMutex.Lock()
 	defer t.updateMutex.Unlock()
 
@@ -26,7 +35,7 @@ func (t *Blog) Create(post *Post) (ID, error) {
 	return post.Id, nil
 }
 
-func (t *Blog) Delete(post *Post) error {
+func (t *Instance) Delete(post *Post) error {
 	t.updateMutex.Lock()
 	defer t.updateMutex.Unlock()
 
@@ -41,10 +50,10 @@ func (t *Blog) Delete(post *Post) error {
 	return nil
 }
 
-func (t *Blog) Update(post *Post) error {
+func (t *Instance) Update(post *Post) error {
 	t.updateMutex.Lock()
 	defer t.updateMutex.Unlock()
-	
+
 	if err := t.repository.Update(post); err != nil {
 		return err
 	}
@@ -56,14 +65,14 @@ func (t *Blog) Update(post *Post) error {
 	return nil
 }
 
-func (t *Blog) GetAll() ([]Post, error) {
+func (t *Instance) GetAll() ([]Post, error) {
 	t.updateMutex.RLock()
 	defer t.updateMutex.RUnlock()
 
 	return t.repository.GetAll()
 }
 
-func (t *Blog) Get(post *Post) error {
+func (t *Instance) Get(post *Post) error {
 	t.updateMutex.RLock()
 	defer t.updateMutex.RUnlock()
 
@@ -73,8 +82,10 @@ func (t *Blog) Get(post *Post) error {
 			return err
 		}
 
+		// Write lock
 		t.updateMutex.Lock()
 		defer t.updateMutex.Unlock()
+
 		// cache miss, set
 		if err := t.cache.Set(post); err != nil {
 			return err
@@ -85,7 +96,7 @@ func (t *Blog) Get(post *Post) error {
 	return nil
 }
 
-func (t *Blog) IncrementViewsNumber(post *Post) error {
+func (t *Instance) IncrementViewsNumber(post *Post) error {
 	t.updateMutex.Lock()
 	defer t.updateMutex.Unlock()
 
@@ -100,8 +111,8 @@ func (t *Blog) IncrementViewsNumber(post *Post) error {
 	return nil
 }
 
-func NewBlog(rep *Repository, cache *Cache) *Blog {
-	return &Blog{
+func NewInstance(rep *Repository, cache *Cache) *Instance {
+	return &Instance{
 		cache:       cache,
 		repository:  rep,
 		updateMutex: &sync.RWMutex{},

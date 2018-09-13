@@ -8,7 +8,7 @@ import (
 )
 
 type Resolver struct {
-	blog *blog.Blog
+	blog blog.Blog
 }
 
 // get(id: ID!): Post
@@ -144,7 +144,7 @@ func (t *Resolver) graphIDToInt(ID graphql.ID) int {
 	return i
 }
 
-func NewResolver(blog *blog.Blog) *Resolver {
+func NewResolver(blog blog.Blog) *Resolver {
 	return &Resolver{
 		blog: blog,
 	}

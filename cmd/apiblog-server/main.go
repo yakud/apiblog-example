@@ -3,15 +3,23 @@ package main
 import (
 	"log"
 
-	"github.com/yakud/apiblog-example/internal/app"
+	"flag"
+
 	"github.com/go-pg/pg"
 	"github.com/go-redis/redis"
+	"github.com/yakud/apiblog-example/internal/app"
 )
 
 func main() {
+	workers := flag.Int("workers", 1, "as int")
+	GQLSchemaFile := flag.String("gql-schema", "schema/schema.graphql", "as string path")
+	serverAddr := flag.String("addr", "0.0.0.0:8080", "as string path")
+	flag.Parse()
+
 	config := &app.Config{
-		ServerAddr:    "0.0.0.0:8080",
-		GQLSchemaFile: "schema/schema.graphql",
+		ServerAddr:    *serverAddr,
+		GQLSchemaFile: *GQLSchemaFile,
+		Workers:       *workers,
 
 		PGOptions: &pg.Options{
 			User:     "pgadmin",

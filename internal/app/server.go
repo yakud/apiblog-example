@@ -1,65 +1,94 @@
 package app
 
 import (
+	"context"
+
+	"sync"
+
 	"github.com/gramework/gramework"
+	"github.com/gramework/gramework/graphiql"
 	"github.com/yakud/apiblog-example/internal/blog"
 	"github.com/yakud/apiblog-example/internal/gql"
 	"github.com/yakud/apiblog-example/internal/pg"
 	"github.com/yakud/apiblog-example/internal/redis"
-	"github.com/gramework/gramework/graphiql"
+	"github.com/yakud/apiblog-example/internal/worker"
 )
 
 type Server struct {
 }
 
 func (t *Server) Run(config *Config) error {
-	// init pg
-	pgdb, err := pg.NewConnection(config.PGOptions)
+	// Init workers
+	ctx, cancelWorkers := context.WithCancel(context.Background())
+	wg := &sync.WaitGroup{}
+
+	workersPool := worker.NewWorkersPool()
+	if b, err := t.newBlogInstance(config); err == nil {
+		workersPool.Run(b, ctx, wg)
+	} else {
+		return err
+	}
+
+	// parse graphql schema
+	schema, err := gql.FileMustParseSchema(
+		config.GQLSchemaFile,
+		gql.NewResolver(workersPool),
+	)
 	if err != nil {
 		return err
 	}
-	defer pgdb.Close()
+
+	// init server
+	gr := gramework.New()
+
+	gr.POST("/graphql", gql.NewHandler(schema))
+	gr.GET("/", graphiql.Handler)
+
+	if err := gr.ListenAndServe(config.ServerAddr); err != nil {
+		return err
+	}
+
+	cancelWorkers()
+	wg.Wait()
+
+	return nil
+}
+
+func (t *Server) runBlogWorkers(config *Config) (*sync.WaitGroup, context.CancelFunc) {
+
+}
+
+func (t *Server) newBlogInstance(config *Config) (*blog.Instance, error) {
+	// init pg
+	pgdb, err := pg.NewConnection(config.PGOptions)
+	if err != nil {
+		return nil, err
+	}
 
 	// init redis
 	redisdb, err := redis.NewConnection(config.RedisOptions)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer redisdb.Close()
 
 	// init blog repository
 	postsRepository := blog.NewRepository(pgdb)
 	postsRepository.DropTable()
 
 	if err := postsRepository.CreateTable(); err != nil {
-		return err
+		return nil, err
 	}
 
 	// init blog cache
 	postsCache := blog.NewCache(redisdb)
 	postsCache.DropAll()
 
-	blogCompose := blog.NewBlog(
+	instance := blog.NewInstance(
 		postsRepository,
 		postsCache,
 	)
 
-	// init server
-	gr := gramework.New()
-
-	// parse graphql schema
-	schema, err := gql.FileMustParseSchema(
-		config.GQLSchemaFile,
-		gql.NewResolver(blogCompose),
-	)
-	if err != nil {
-		return err
-	}
-
-	gr.POST("/graphql", gql.NewHandler(schema))
-	gr.GET("/", graphiql.Handler)
-
-	return gr.ListenAndServe(config.ServerAddr)
+	return instance, nil
 }
 
 func NewServer() *Server {
