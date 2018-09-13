@@ -15,7 +15,7 @@ func Bench() {
 
 	go func() {
 		ticker := time.NewTicker(time.Second)
-		for _ := range ticker.C {
+		for _ = range ticker.C {
 			fmt.Println(count, "events/sec")
 			atomic.StoreInt32(&count, 0)
 		}
