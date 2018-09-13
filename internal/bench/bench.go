@@ -35,7 +35,7 @@ func Bench() {
 		ticker := time.NewTicker(time.Second)
 		for range ticker.C {
 			fmt.Printf(
-				"%d events/sec; p50: %d\tp75: %d\tp95: %d\tp99: %d\n",
+				"%d events/sec; p50: %f\tp75: %f\tp95: %f\tp99: %f\n",
 				count,
 				p50,
 				p75,
