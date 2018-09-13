@@ -15,4 +15,4 @@ install:
 	go install github.com/yakud/apiblog-example/cmd/apiblog-server
 
 run:
-	$(GOPATH)/bin/apiblog-server
+	$(GOPATH)/bin/apiblog-server -workers=5
