@@ -54,6 +54,7 @@ func Bench() {
 		t := time.Now()
 		err := queryCreate()
 		if err != nil {
+			fmt.Println(err)
 			continue
 		}
 
