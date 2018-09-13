@@ -3,12 +3,16 @@ services:
   postgres:
     restart: always
     image: postgres:10.5
+    ports:
+      - '5434:5432'
     environment:
       POSTGRES_USER: pgadmin
       POSTGRES_PASSWORD: pgadmin
       POSTGRES_DB: apiblog
 
   redis:
+    ports:
+      - '6379:6379'
     image: redis
 
   apiblog:
