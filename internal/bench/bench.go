@@ -15,7 +15,7 @@ var client = &http.Client{}
 func durationsToFloat64(durations []time.Duration) []float64 {
 	data := make([]float64, len(durations))
 	for i, j := range durations {
-		data[i] = float64(j / time.Microsecond)
+		data[i] = float64(j.Nanoseconds() / time.Millisecond.Nanoseconds())
 	}
 
 	return data
@@ -35,12 +35,12 @@ func Bench() {
 		ticker := time.NewTicker(time.Second)
 		for range ticker.C {
 			fmt.Printf(
-				"%d events/sec; p50: %f\tp75: %f\tp95: %f\tp99: %f\n",
+				"%d events/sec; p50: %d\tp75: %d\tp95: %d\tp99: %d\n",
 				count,
-				p50,
-				p75,
-				p95,
-				p99,
+				int(p50),
+				int(p75),
+				int(p95),
+				int(p99),
 			)
 
 			atomic.StoreInt32(&count, 0)
