@@ -5,6 +5,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	"sync"
+
+	"flag"
+
 	"github.com/montanaflynn/stats"
 	"github.com/valyala/fasthttp"
 )
@@ -22,8 +26,11 @@ func durationsToFloat64(durations []time.Duration) []float64 {
 }
 
 func Bench() {
+	workers := flag.Int("workers", 10, "")
+	flag.Parse()
 
 	var count int32
+	m := &sync.Mutex{}
 	durations := make([]time.Duration, 0)
 
 	go func() {
@@ -46,20 +53,29 @@ func Bench() {
 			)
 
 			atomic.StoreInt32(&count, 0)
+			m.Lock()
 			durations = make([]time.Duration, 0)
+			m.Unlock()
 		}
 	}()
 
-	for {
-		t := time.Now()
-		err := queryCreate()
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
+	for i := 0; i < *workers; i++ {
+		go func() {
+			for {
+				t := time.Now()
+				err := queryCreate()
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
 
-		durations = append(durations, time.Now().Sub(t))
-		atomic.AddInt32(&count, 1)
+				m.Lock()
+				durations = append(durations, time.Now().Sub(t))
+				m.Unlock()
+
+				atomic.AddInt32(&count, 1)
+			}
+		}()
 	}
 }
 
